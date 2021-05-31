@@ -1,0 +1,16 @@
+--------------------------------------------------------------------------
+STATIC PODS - 
+kubelet stores the pod definition files (yamls ) in /etc/kubernetes/manifests , you can get this path bye checking for --pod-manifest-path option in /etc/systemd/system/kubelet.service, if u dont find the --pod-manifest-path option the chcek for the option --config and get the path of kubeconfig.yaml and in th ekubeconfig .yaml check for staticPodPath, one more way to find out path - ps -ef|grep kubelet |grep "\--config" , get the config file and grep for static in the config.yaml
+
+kubelet chks this folder for yaml files and creates pods out of them
+if we remove a yaml from this directory them pod is removed automatically
+
+the pods that are created by kubelet without the intervension of the cluster components are call static pods
+
+we can only create pods this way not any other service
+
+usecase - useful to craete a master node
+
+how to check for static pods in a cluster - 
+kubectl get pods --all-namespaces -o wide
+bow looks for the pods that have ending as nodename
