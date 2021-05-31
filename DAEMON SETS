@@ -1,0 +1,43 @@
+--------------------------------------------------------------------------
+DAEMON SETS - when we use repicaset it makes sure an specified number of copies of pods exist in the cluster but the node the replica exists doesnt matter but when we use DAEMON SETS it makes sure one copy of a pod run on all the nodes, if a new node is added then replica of the pod will be deployed on the new node too.
+
+use case  - to monitor the nodes that are in the cluster
+		  - to collect the logs of nodes in the cluster
+example yaml for daemon set (cat > daemonset-definition.yaml)-
+piVersion: apps/v1
+kind: DaemonSet
+metadata:
+   name:monitorining-daemon(this is name of daemonset)
+   labels:
+      app: my-app
+      costCenter: US   
+
+spec:
+   selector:
+      matchLabels:
+	     app:monitoring-agent
+   template:
+      metadata:
+	     labels:
+		    app:montioring-agent
+      spec:
+         containers:
+            - name:monitoring-agent
+              image:monitoring-agent
+		    
+This is yaml is exactly like replicaset only change is kind which is DaemonSet instead of ReplicaSet
+
+pods deployed by the daemonset will have the same name as daemonset
+
+command- kubectl create -f daemonset-definition.yaml
+to view daemonstes command- kubectl get daemonsets
+to view more datials - kubectl describe daemonsets <daemonset name>
+
+command to get daemosnsets in all namespaces - kubectl get ds --all-namespaces
+command to see the nodes on which the daemonset is ruinng - kubectl -n <namespace name> get pods -o wide |grep <daemonset name>
+command to see the image that daemonset uses - kubectl -n <namespace name> descibe -ds <daemonset name> |grep -i image
+
+another way to create daemonset - kubectl create deployment <daemonset name> --image=<imagename> --dry-run=client -o yaml >daemon-set.yaml
+do the required changes to the yaml to convert it into daemonset yaml and run kubectl apply -f daemon-set.yaml
+
+--------------------------------------------------------------------------
