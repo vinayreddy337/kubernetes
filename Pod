@@ -1,0 +1,64 @@
+--------------------------------------------------------------------------
+command to create a pod from a image - kubectl run nginx --image=nginx
+command to get the node on which pod is placesd - kubectl get pods -o wide
+command to create a dryrun and get a yml from run command - kubectl run redis --image=redis123 --dry-run=client -o yaml >pod.yaml (this will not create pod but give us yaml output for deploying pod)
+command with command - kubectl run static-busybox --image=buzybox --commmand sleep 1000 --dry-run=client -o yaml >pod.yaml
+
+command to get all the options available in a pod yaml file - kubectl explain pod --recursive|less
+
+commands to generate yml file  - https://kubernetes.io/docs/reference/kubectl/conventions/
+
+to deploy the pod from yaml (do changes to yaml file and run the command kubectl apply -f pod.yaml)
+
+Example yaml to deploy two containers in a pod
+
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+   name: myapp-pod (this is name of pod)
+   labels:
+      app: myapp
+      anykey: anyvalue
+      costcenter: US
+      
+      
+spec:
+   containers:
+      - name: nginx-container (this is name of container in pod)
+        image: nginx (this is the image that kubernetes gets from docker hub)
+        
+      - name: redis-container
+        image: redis
+      
+Add the above line to pod-definition.yaml (cat > pod-definition.yaml and paste the above thing)
+
+and run the command - kubectl create -f pod-definition.yaml - this creates a pod
+to see the pods - kubectl get pods
+to see the status of a pod - kubectl describe pod <pod name>
+to edit a pod- kubectl edit pod redis 
+
+
+
+before -
+
+apiVersion: v1
+kind: Pod
+metadata:
+        name: redis
+        labels:
+           app: my-redis-app
+           cost-centre: US
+spec:
+        containers:
+                - name: redis
+                  image: redis123
+
+kubectl create -f pod-definition.yaml - now as image name is wrong, pod will have error saying image name wrong
+
+to fix this edit the image name from redis123 to redis , to edit a pod- kubectl edit pod redis (this will open the running conf of a pod, go to the bottom , edit image name from redis123 to redis and save)
+
+to get the logs of a pod command -kubectl logs <podname>
+--------------------------------------------------------------------------
