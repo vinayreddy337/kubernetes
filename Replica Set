@@ -1,0 +1,55 @@
+--------------------------------------------------------------------------
+ Replicaset - 
+ 
+ command to create replicaset yaml - kubectl create deployment busybox --image=busyboxxxxxxx --dry-run -o yaml > busybox.yamlx
+ 
+ example yaml to create repliaction set (cat > rs-difintion.yaml)
+
+apiVersion: apps/v1
+kind: Replicaset
+metadata:
+   name:rc-controller(this is name of relica set)
+   labels:
+      app: my-app
+      costCenter: US
+      
+spec:
+   template:
+      metadata:
+         name:nginx-app(this is name of pod)
+         labels:
+            app: my-app
+            costcenter: us
+            user: hari
+      spec:
+         containers:
+            - name:nginx-container
+              image:nginx
+              
+   replicas: 3 (this is number of replicas)
+   selector:
+      matchLabels:
+	     type:
+		    costCenter:us
+ 
+ command - kubectl create -f rs-definition.yaml
+ 
+ in replicationset we can add the pods that were created before, we juust need to their labels in selector -> matchlabes - >type, then theat pod also comes under replicaset( THIS IS MAJOR DIFFERENCE BETWEEN REPLICA CONTROLLER AND REPLICA SET)
+ 
+ 
+ 
+ command to the the replication controllers - kubectl get replicaset
+ 
+ 
+ how to update the number of replicas after the resplicaset is created - 
+ 
+ method 1 -
+ 
+ use the command - kubectl scale --replicas=6 -f rs-definition.yaml or
+ use the command - kubectl scale --replicas=6 replicaset <replicaset name>
+ 
+ method 2 - 
+ 
+ update the number of replicas from 3 to lets say 6 in the rs-definition.yaml and run the command -  kubectl replace -f rs-definition.yaml
+ 
+ --------------------------------------------------------------------------
