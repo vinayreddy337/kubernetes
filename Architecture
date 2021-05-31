@@ -48,3 +48,52 @@ So for the commands  to work you must specify the ETCDCTL API version and path t
 
 
 kubectl exec etcd-master -n kube-system -- sh -c "ETCDCTL_API=3 etcdctl get / --prefix --keys-only --limit=10 --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt  --key /etc/kubernetes/pki/etcd/server.key" 
+
+--------------------------------------------------------------------------
+
+kube scheduler - it deploys the containers or to workers based on two factors
+
+1)how many resources(cpus) the container need (if a node has less cpus than the pod requres schuduler wont deploy it on that node)
+2) how maany resources(cpus) will be left after deploying the pod(id two nodes have 14 and 16 cpus respectively and the pod need 10 cps , the pod will be deployed in the 16 cpu node as it has more cpus)
+
+--------------------------------------------------------------------------
+
+kude controller manager - it manages replication , node control 
+
+node controller - continously monitors the status of nodes and take necessary actions to keed nodes alive and it does through kube api server( node controller sends the request to kube api server and kube api server sends the requests to kubelet to get thge stratus of node)
+the node controller gets the status of nodes every 5 seconds
+if it stops getting heart beat from a node then the node is marked as unreachable ( node monitor grace period 40 seconds) 
+kube controller give the unreachable node 5 mins to come back online, if it doesnt then all the pods that were running on that nodes will be moved tha healthy nodes.
+
+replication controller - it is responisible for maintaining the desired number of replicas
+
+
+--------------------------------------------------------------------------
+
+kube api server - its useful to talk to kubernets cluster
+
+in order to deploy a pod in kubernetes it follows below steps
+
+1) user is authenticated by kube api server
+2) request is validated by kube api server
+3)kube api server creaste a pod object without assaigning a node and then it is updated in etcd cluster
+4)updated the user pod is created
+5)scheduler continuously monitors api server and when it realises a pod is created , it assaigns a node to to the pod 
+6)kube api server updated the etcd cluster with the node.
+7)kube api server passes the information to the kubelet on the worker node assaigned by scheduler
+8)kubelet then creates the pod and instructs container runtime engine to deploy the application image 
+9) once deployment is done kublet updates the status back to kube api server
+10)api server then updates the data in etcd cluster
+
+This whole process is repeated for every pod deployment request
+
+kube api server is the only service that talks directly to etcd cluster, rest all services use kube api server to talk to etcd cluster
+
+--------------------------------------------------------------------------
+
+worker node - 
+kubelet - this listens to instruction from kube api server  and manages containers.
+
+kube proxy -this enables comunication between different worker nodes
+
+--------------------------------------------------------------------------
