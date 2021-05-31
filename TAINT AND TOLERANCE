@@ -1,0 +1,41 @@
+--------------------------------------------------------------------------
+TAINT AND TOLERANCE-
+
+If tainit is applied then pods which dont have tolerence to that node will not be launched on that node
+
+by default all pods dont have any tolerence to any taint
+
+taint- taint is added to node
+
+command to taint a node - kubectl taint nodes <node name> key=value:<taint-effect>
+there are 3 taint effects -NoSchedule  | PreferNoSchedule | NoExecute
+command to remove a taint - kubectl taint node <node name> <key>-
+
+NoSchedule - pods will not be scheduled on the node
+PreferNoSchedule - pods will not be scheduled on the node but no garuntee
+NoExecute- now new pods will not be schedukled and if alredy existing pods cant tolerate the taint then they will be evicted.
+
+toleration - toleration is added to pod
+example yaml of pod with toleration - cat > pod-definition.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+   name: myapp-pod (this is name of pod)
+   labels:
+      app: myapp
+      anykey: anyvalue
+      costcenter: US
+      
+      
+spec:
+   containers:
+      - name: nginx-container (this is name of container in pod)
+        image: nginx (this is the image that kubernetes gets from docker hub)
+   tolerations:
+      - key: "<key>"
+	    operator: "Equal"
+		value: "<value>"
+		effect: "NoSchedule"
+		
+    --------------------------------------------------------------------------
