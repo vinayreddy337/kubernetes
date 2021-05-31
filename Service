@@ -1,0 +1,90 @@
+--------------------------------------------------------------------------
+
+SERVICE in kubernetes
+
+service is a object in kubernetes that helps in communication between pods and also help in communincation between users or a batabase outside kebernets to talk with pods
+
+types of services - 
+
+NodePort - this makes an internal pod on a node accessable to outside
+	nodeport rage - 30000 - 32767
+	
+	example yml - cat > service-definition.yaml -
+	
+apiVersion: apps/v1
+kind: Service
+metadata:
+   name:myapp-service(this is name of service)
+   labels:
+      app: my-app
+      costCenter: US
+      
+spec:
+   type: NodePort
+   ports:
+      - targetPort: 80
+        port: 80
+        nodeport: 30001
+   selector:
+      app: my-app
+command - kubectl create -f service-definition.yaml
+kubectl get services
+
+command to create a nodeport yaml - kubectl expose deployment <name of deployment> --name=<service name> --target-port=<target port> --type=NodePort --port=<port> --dry-run=client -o yaml > service-definition.yaml
+ex - kubectl expose deployment simple-webapp-deployment --name=webapp-service --target-port=8080 --type=NodePort --port=8080 --dry-run=client -o yaml > service-definition.yaml
+	
+
+ClusterIP - this creates a virual ip inside the cluster that enables the communication b/w different services in the cluster
+frnt end service has 3 pods
+backend 3pods
+key-value store 3 pods
+in order to enable comminuincation between them we use clusterIP 
+
+example yml - cat > service-definition.yaml -
+
+apiVersion: apps/v1
+kind: Service
+metadata:
+   name: back-end(this is name of service)
+   labels:
+      app: my-app
+      costCenter: US
+      
+spec:
+   type: ClusterIP
+   ports:
+      - targetPort: 80
+        port: 80
+   selector:
+      app: my-app
+command - kubectl create -f service-definition.yaml
+kubectl get services
+
+loadbalancer - node port is useful to expose port to outside but the user need to hits the ip of the pod in order to reach the pod
+ex - 
+if 3 pods are on ip's 192.168.1.2,3,4
+then user can reach the pod using curl http://192.168.1.1 or http://192.168.1.2 or http://192.168.1.2 but the end user need a single ip to hit on to reach the service
+Load balancer does this.
+
+This works only in native cloud like aws azure or GCP
+
+example yml - cat > service-definition.yaml -
+	
+apiVersion: apps/v1
+kind: Service
+metadata:
+   name:myapp-service(this is name of service)
+   labels:
+      app: my-app
+      costCenter: US
+      
+spec:
+   type: LoadBalancer
+   ports:
+      - targetPort: 80
+        port: 80
+        nodeport: 30001
+   selector:
+      app: my-app
+
+--------------------------------------------------------------------------
