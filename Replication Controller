@@ -1,0 +1,32 @@
+--------------------------------------------------------------------------
+Replication controller - 
+
+example yaml to create repliaction controller (cat > rc-difintion.yaml)
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+   name:rc-controller(this is name of relica controller)
+   labels:
+      app: my-app
+      costCenter: US
+      
+spec:
+   template:
+      metadata:
+         name:nginx-app(this is name of pod)
+         labels:
+            app: my-app
+            costcenter: us
+            user: hari
+      spec:
+         containers:
+            - name:nginx-container
+              image:nginx
+              
+   replicas: 3 (this is number of replicas)
+ 
+ command - kubectl create -f rc-definition.yaml
+ command to the the replication controllers - kubectl get replicationcontroller
+ 
+ --------------------------------------------------------------------------
