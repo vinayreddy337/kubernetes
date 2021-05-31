@@ -1,0 +1,45 @@
+ --------------------------------------------------------------------------
+Deployment - this creates a replica set, offers rollback, rolling update of pods 
+
+command to create deployments - kubectl create deployment httpd-frontend --image=http:2.4-alpine --dry-run -o yaml > dep.yaml
+
+command to create deployment - kubectl create deployment httpd-frontend --image=http:2.4-alpine
+then scale using command - kubectl scale deployment --replicas=3 httpd-frontend 
+
+ example yaml to create repliaction set (cat > deploy-defintion.yaml)
+ 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name:rc-deployment(this is name of deployment)
+   labels:
+      app: my-app
+      costCenter: US
+      
+spec:
+   template:
+      metadata:
+         name:nginx-app(this is name of pod)
+         labels:
+            app: my-app
+            costcenter: us
+            user: hari
+      spec:
+         containers:
+            - name:nginx-container
+              image:nginx
+              
+   replicas: 3 (this is number of replicas)
+   selector:
+      matchLabels:
+         app:my-app
+		 
+command - kubectl create -f deploy-defintion.yaml
+kubectl get deployments
+kubectl get replicaset - this will show replica set created by deployment
+
+to see all object created in kubernetes use command - kubectl get all
+
+commands to generate yml file  - https://kubernetes.io/docs/reference/kubectl/conventions/
+
+ --------------------------------------------------------------------------
