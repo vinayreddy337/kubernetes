@@ -1,0 +1,33 @@
+--------------------------------------------------------------------------
+ Namespace
+command to create a namespace - kubectl create namespace <namespace name>
+command to see the current namespaces in cluser - kubectl get namespaces
+ or kubectl get ns or kubectl get ns --no-headers 
+to see the pods running in another namespace - kubectl get pods --namespace=<namespace name>
+or kubectl -n <namespacename> get pods
+to create a pod in another namespace - kubectl get pods --namespace=<namespace name>
+we can alsoe mention namespace in yaml file under metadata - 
+
+example - 
+
+metadata:
+   name:nginx-app(this is name of pod)
+   namespace: namespace-name
+      labels:
+
+c
+		 
+example yaml file to create a namespace (cat > namespace-defintion.yaml) - 
+
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: dev
+		 
+ kubectl create -f namespace-defintion.yaml
+ 
+command to change the namespace from default to dev(ur own namespace name) - kubectl config set-context $(kubectl config current-context) --namespace=dev
+
+to view pods in all namespaces - kubectl get pods --all-namespaces 
+
+--------------------------------------------------------------------------
