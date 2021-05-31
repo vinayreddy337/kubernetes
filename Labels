@@ -1,0 +1,9 @@
+--------------------------------------------------------------------------
+LABELS and selectors
+
+kubectl get pods --show-labels
+
+command to select the pods based on the labes - kubectl get pods --selector <key>=<value>,<key2>=<value2>  ex - kubectl get pods --selector resion=US  or
+   kubectl get pods -l <key>=<value>,<key2>=<value2>
+   
+--------------------------------------------------------------------------
