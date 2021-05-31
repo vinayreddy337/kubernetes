@@ -1,0 +1,46 @@
+--------------------------------------------------------------------------
+
+IMPERATIVE - we giving all the instructions that the machine needs to do
+imperative way of managing objects in kubernetes commands- 
+
+create objects -
+kubectl run --image=nginx
+kubectl run redis --image=redis --labels=tier=db
+kubectl create deployment --image=nginx nginx
+kubectl expose deployment nginx --port=80
+kubectl expose pod redis --name reis-service --port=6379 --target-port=6379
+
+pod
+kubectl run nginx --image=nginx  --dry-run=client -o yaml
+kubectl run httpd --imae=httpd --port=80 --expose --dry-run=client -o yaml
+
+deployment
+kubectl create deployment --image=nginx nginx --dry-run=client -o yaml
+kubectl create deployment nginx --image=nginx--dry-run=client -o yaml > nginx-deployment.yaml
+service
+kubectl expose pod redis --port=6379 --name redis-service --dry-run=client -o yaml
+kubectl create service clusterip redis --tcp=6379:6379 --dry-run=client -o yaml
+kubectl expose pod nginx --port=80 --name nginx-service --type=NodePort --dry-run=client -o yaml
+kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=client -o yaml
+
+
+
+
+
+update objects-
+kubectl edit deployment nginx
+kubectl scale deployment nginx --replicas=5
+kubectl set image deployment nginx nginx=nginx:1.8
+kubectl create -f nginx.yaml
+kubectl replace -f nginx.yaml
+kubectl replace --force -f nginx.yaml - this completely removes objects and recraetes it
+kubectl delete -f nginx.yaml
+
+
+
+DECLARATIVE - we give what we need and machien handles how.
+declarative way - it reads from a file and does what it needs to do , command-
+kubectl apply -f nginx.yaml - this will creat the object from yml file if the object doest exist and it will update the object if it already exist
+
+
+--------------------------------------------------------------------------
