@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------
+
+SCHEDULing
+
+command to check if a scheduler is poresent or nor  -kubectl get scheduler
+command to see the all the components of kubernerts - kubectl -n kube-system get get pods
+
+if schedukler is not present then the node wont be allocated to a pod and then it will be just in running state
+
+Manual scheduling - 
+
+if we dont specify nodeName in spec of a pod yaml the kuberenetes auotmaitically assaigns a node if it has a scheduler but if we want to assaign a node to pod we need to specify the nodeName in spec in yaml.
+
+If pod is created and then we want to schedule the pod to different node use binding object (cat > pod-bind.yaml)
+
+apiVersion: v1
+kind: Binding
+metadata:
+   name: <name of pod>
+target:
+   apiversion: v1
+   kind: Node
+   name: <name of node>
+ 
+--------------------------------------------------------------------------
