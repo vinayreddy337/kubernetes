@@ -1,0 +1,39 @@
+--------------------------------------------------------------------------
+NODEAFFINITY
+
+the limitions of nodeSelectors are solved using nodeAffinity
+
+yaml file to launch a pod on node with label size( what we did above) using nodeAffinity - (cat >pod-definition.yaml)
+
+apiVersion: v1
+ kind: Pod
+ metadata:
+    name:webapp-pod
+	labels:
+	   user: hari
+spec:
+   containers:
+      - name: hari-container
+        image: nginx
+   affinity	
+      nodeAffinity:
+         requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+               - key: size
+                 operator: In 
+                 values:
+                 - large	 
+                 - medium	(if we want to add	two valuess this is how we do it, if we want only one remove medium)  
+			  
+other operators available area
+NotIn (opposite of In)
+Exists (if we use exits we dont need to give values field, it just checks if key exists and if it exists then it deploys the pod)
+
+types of node affinity - 
+requiredDuringSchedulingIgnoredDuringExecution - if we use this and then the node doesnt have label, then pod is not scheduled 
+preferredDuringSchedulingIgnoredDuringExecution - if we use this and then the node doesnt have label, then pod is placed on some other node
+
+after deploying pod , id node label is removed then it doesnt affect the running pod 
+
+--------------------------------------------------------------------------
