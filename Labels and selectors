@@ -1,0 +1,35 @@
+--------------------------------------------------------------------------
+LABELS and selectors
+
+kubectl get pods --show-labels
+
+command to select the pods based on the labes - kubectl get pods --selector <key>=<value>,<key2>=<value2>  ex - kubectl get pods --selector resion=US  or
+   kubectl get pods -l <key>=<value>,<key2>=<value2>
+   
+--------------------------------------------------------------------------
+
+--------------------------------------------------------------------------
+
+NODE LABEL AND SELECTORS
+ command to add a label to node - kubectl label nodes <node-name> <key>=<value> example = kubectl label nodes node01 size=large
+ command to show labels ona  node - kubectl get nodes <node-name> --shoe-labels or kubectl descibe node<nodename> |grep -i labels
+ 
+ if node selector is set to a pod then the pod will be launched in the node with label of the node selector
+ yaml to to cretae a pod with nodeSelector (cat > pod-definition.yaml)
+ 
+ apiVersion: v1
+ kind: Pod
+ metadata:
+    name:webapp-pod
+	labels:
+	   user: hari
+spec:
+   containers:
+      - name: hari-container
+        image: nginx
+   nodeSelector:
+      size: large  
+
+limitaion of nodeSelector - we cannot say a pod to launch on nodes that doesnt have size=large, we can only say on which node the pod can be launched
+ 	  
+--------------------------------------------------------------------------
