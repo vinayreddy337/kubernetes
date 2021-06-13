@@ -41,5 +41,13 @@ kubectl get replicaset - this will show replica set created by deployment
 to see all object created in kubernetes use command - kubectl get all
 
 commands to generate yml file  - https://kubernetes.io/docs/reference/kubectl/conventions/
+command to update the image of a deployment - kubectl set image <deployment name> nginx=nginx:1.9.1
+
+ROLLING UPDATES AND ROLLBACKS
+
+to check the rollout status of a deployment use command - kubectl rollout status <deployment name>
+to check the history of a rollout of a deployment use command - kubectl rollout history <deployment name>
+command to update the image of a deployment - kubectl set image <deployment name> nginx=nginx:1.9.1
+command to rollback to older version of deployment - kubectl rollout undo <deployment name>
 
  --------------------------------------------------------------------------
