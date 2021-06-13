@@ -61,4 +61,5 @@ kubectl create -f pod-definition.yaml - now as image name is wrong, pod will hav
 to fix this edit the image name from redis123 to redis , to edit a pod- kubectl edit pod redis (this will open the running conf of a pod, go to the bottom , edit image name from redis123 to redis and save)
 
 to get the logs of a pod command -kubectl logs <podname>
+command to run a shell command on a pod use command  - kubectl exec --namespace=kube-public curl -- sh -c ' <cmmand>'
 --------------------------------------------------------------------------
