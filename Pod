@@ -62,4 +62,21 @@ to fix this edit the image name from redis123 to redis , to edit a pod- kubectl 
 
 to get the logs of a pod command -kubectl logs <podname>
 command to run a shell command on a pod use command  - kubectl exec --namespace=kube-public curl -- sh -c ' <cmmand>'
+
+yamls with args to a conatiner - 
+
+apiVersion: v1
+kind: Pod
+metadata:
+   name: myapp-pod (this is name of pod)
+   labels:
+      app: myapp
+      anykey: anyvalue
+      costcenter: US      
+spec:
+   containers:
+      - name: ubuntu-sleeper
+        image: ubuntu
+		command: ["sleep"]
+		args: ["10"]
 --------------------------------------------------------------------------
