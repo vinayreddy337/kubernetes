@@ -153,4 +153,68 @@ spec:
 		         name: app-config
 				 
 kubectl create -f pod-definition.yaml
+
+
+SECRETS
+data stored in a secret is encoded or hashed format
+two steps to use secret -
+1 -create the secret2 - inject it into pod
+
+imperative way to create a secret 
+use command - kubectl create secret generic <secret name> --from-literal=<key>=<value>
+create secrect from file - kubectl create secret generic <secret name> --from-file=<path to file>
+data in file - 
+<key1>=<value1>
+<key2>=<value2>
+<key3>=<value3>
+
+declarative way - 
+example - cat > secret-definition.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+   name: myapp-pod (this is name of secret)
+   labels:
+      app: myapp
+      anykey: anyvalue
+      costcenter: US      
+data:
+   <key1>=<value1>
+   <key2>=<value2>
+   <key3>=<value3>
+
+kubectl create -f secret-definition.yaml
+command to view secrets - kubectl get secrets
+command to describe secret - kubectl descibe secrets - this shows keys but not values
+command to see the values in a secrets - kubectl get secret <secret name> -o yaml
+
+pod-definition file to use secret -
+
+apiVersion: v1
+kind: Pod
+metadata:
+   name: myapp-pod (this is name of pod)
+   labels:
+      app: myapp
+      anykey: anyvalue
+      costcenter: US      
+spec:
+   containers:
+      - name: webserver
+        image: nginx
+		command: ["nginx"]
+		ports:
+		   - conatinerPort: 8080
+		envFrom:
+		   - secretRef:
+		         name: <secret name>
+
+another way -
+        env:
+		   - name: <secret name>
+		     valueFrom: 
+			    secretKeyRef:
+				   name: <key>
+				   key: <value>
+
 --------------------------------------------------------------------------
