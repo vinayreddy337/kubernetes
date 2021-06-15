@@ -9,6 +9,7 @@ kubectl run redis --image=redis --labels=tier=db
 kubectl create deployment --image=nginx nginx
 kubectl expose deployment nginx --port=80
 kubectl expose pod redis --name reis-service --port=6379 --target-port=6379
+kubectl create configmap <config name> --from-literal=<key>=<value>
 
 pod
 kubectl run nginx --image=nginx  --dry-run=client -o yaml
