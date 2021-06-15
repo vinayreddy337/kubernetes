@@ -1,4 +1,6 @@
 --------------------------------------------------------------------------
+kubectl explain pods --recursive |less
+
 
 IMPERATIVE - we giving all the instructions that the machine needs to do
 imperative way of managing objects in kubernetes commands- 
