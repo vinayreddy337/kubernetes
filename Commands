@@ -1,6 +1,4 @@
 --------------------------------------------------------------------------
-kubectl explain pods --recursive |less
-
 
 IMPERATIVE - we giving all the instructions that the machine needs to do
 imperative way of managing objects in kubernetes commands- 
@@ -12,7 +10,7 @@ kubectl create deployment --image=nginx nginx
 kubectl expose deployment nginx --port=80
 kubectl expose pod redis --name reis-service --port=6379 --target-port=6379
 kubectl create configmap <config name> --from-literal=<key>=<value>
-kubectl create secret generic <secret name> --from-literal=<key>=<value>
+
 pod
 kubectl run nginx --image=nginx  --dry-run=client -o yaml
 kubectl run httpd --imae=httpd --port=80 --expose --dry-run=client -o yaml
@@ -30,6 +28,7 @@ kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=cl
 
 
 
+
 update objects-
 kubectl edit deployment nginx
 kubectl scale deployment nginx --replicas=5
@@ -38,6 +37,7 @@ kubectl create -f nginx.yaml
 kubectl replace -f nginx.yaml
 kubectl replace --force -f nginx.yaml - this completely removes objects and recraetes it
 kubectl delete -f nginx.yaml
+command to update the image of a deployment - kubectl set image <deployment name> nginx=nginx:1.9.1
 
 
 
@@ -45,5 +45,7 @@ DECLARATIVE - we give what we need and machien handles how.
 declarative way - it reads from a file and does what it needs to do , command-
 kubectl apply -f nginx.yaml - this will creat the object from yml file if the object doest exist and it will update the object if it already exist
 
+command to get a yaml from running pod - kubectl -n <namespace> get <resource type> <resource Name> -o yaml
+command to run a shell command on a pod use command  - kubectl exec --namespace=kube-public curl -- sh -c ' <cmmand>'
 
 --------------------------------------------------------------------------
