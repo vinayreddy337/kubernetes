@@ -1,0 +1,52 @@
+--------------------------------------------------------------------------
+CUSTON SCHEDULER
+command to get a yaml from running pod - kubectl -n <namespace> get <resource type> <resource Name> -o yaml
+
+example yaml to create a custom scheduler - (cat > scheduler-definition.yaml)
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-scheduler (scheduler name)
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-scheduler
+    - --authentication-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --authorization-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --bind-address=127.0.0.1
+    - --kubeconfig=/etc/kubernetes/scheduler.conf
+    - --leader-elect=false
+    - --scheduler-name=my-scheduler (scheduler name)
+    - --lock-object-namespace=my-scheduler (scheduler name)
+    image: k8s.gcr.io/kube-scheduler:v1.20.0
+    imagePullPolicy: IfNotPresent
+    name: kube-scheduler-mine
+
+
+yaml file to create a pod using custom scheduler-definition
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+  schedulerName: my-scheduler
+  
+  reference links - 
+  
+  Please check the following:
+
+https://github.com/kubernetes/community/blob/master/contributors/devel/sig-scheduling/scheduler.md
+
+https://kubernetes.io/blog/2017/03/advanced-scheduling-in-kubernetes/
+
+https://jvns.ca/blog/2017/07/27/how-does-the-kubernetes-scheduler-work/
+
+https://stackoverflow.com/questions/28857993/how-does-kubernetes-scheduler-work
+
+--------------------------------------------------------------------------
