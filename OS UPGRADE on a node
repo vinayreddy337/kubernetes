@@ -1,0 +1,19 @@
+--------------------------------------------------------------------------
+OS UPGRADE on a node
+
+if a node is down for more than 5 mins then the pods are terminated from that node, kuberenetes considers that node as dead and users wont be able to access those pods.
+
+the time kubernerts waits for a pod to come back online is 5 mins if the pods wonty come back in 5mins then its evicted.
+
+command to set the eviction time - kubectl-controller-manager --pod-eviction-timeout=5m0s
+
+if we want to move all pods on a node to other nodes use command - kubectl drain <node name> - if we use this command , until we remove the restriction no new pods will be scheduled on this node
+
+command to remove restriction - kubectl uncordon <node name>
+
+another command to mark a node unschedullable - kubectl cordon <node name> - this wont effect the alredy running pods , only new pods wont be scheduled on the node 
+
+this cordon and uncordon is for kube scheduler , even if node is cordained we can manually schedule the pods on the node 
+
+
+--------------------------------------------------------------------------
