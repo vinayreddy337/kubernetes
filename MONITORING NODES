@@ -1,0 +1,16 @@
+--------------------------------------------------------------------------
+
+MONITORING NODES in  a kubernetes cluster - 
+
+deploy metrics servers on all nodes to monitor the metrics 
+
+to deploy the metrics server run -
+1 - git clone https://github.com/kodekloudhub/kubernetes-metrics-server.git
+2 - cd kubernetes-metrics-server/
+3 - kubectl create -f .
+
+now to check the metris run command -
+kubectl top node - to get node metrics
+kubectl top pod - to get pod metrics
+
+--------------------------------------------------------------------------
