@@ -1,0 +1,9 @@
+--------------------------------------------------------------------------
+APPLICATION LOGS
+docker logs -f <conatiner name>
+kubectl logs -f <pod name>
+if there are muntiple containers in the pod then we needf to specify the container name - kubectl logs -f <pod name> <container name>
+to get the container names in the pods use command - kubectl get pods [pod-name-here] -n [namespace] -o jsonpath='{.spec.containers[*].name}* , ex - kubectl get pods redis-bootstrap -n redis-cluster -o jsonpath='{.spec.containers[*].name}*
+or use kubectl describe pods redis-bootstrap -n redis-cluster
+
+--------------------------------------------------------------------------
