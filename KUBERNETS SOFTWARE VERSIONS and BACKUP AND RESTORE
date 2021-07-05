@@ -1,0 +1,71 @@
+--------------------------------------------------------------------------
+KUBERNETS SOFTWARE VERSIONS - 
+
+https://kubernetes.io/docs/concepts/overview/kubernetes-api/
+
+Here is a link to kubernetes documentation if you want to learn more about this topic (You don't need it for the exam though):
+
+https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md
+
+https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md
+
+command to chk the verisons of components in cluster - kubeadm upgrade plan
+command to update kubeadm - apt-get upgrade kubeadm=1.20.0-00 -y
+then use command - kubeadm upgrade apply v1.2.0 to update the cluster components
+command to update kubelet - apt-get upgrade kubelet=1.20.0-00 -y then restart kubelet - systemctl restart kubelet
+
+steps to upgrade cluster version - 
+master or control plane - 
+apt-get update
+apt-get install -y kubeadm=1.20.0-00
+check kubeadm version using command -$kubeadm version
+chk for upgrade plan using command - kubeadm upgrade plan
+to upgrade use command - kubeadm upgrade apply v1.20.0
+to check if update finished successfully use command  - kubeadm upgrade plan and check versions of components
+
+kubelet on controlplane -
+kubectl drain controlplane --ignore-daemonsets
+command to check kubectl version - kubectl version
+apt-get install -y kubelet=1.20.0-00 kubectl=1.20.0-00
+systemctl daemon-reload
+systemctl restart kubelet
+kubectl uncordon controlplane
+
+kubelet on workernode -
+apt-get update
+apt-get install -y kubeadm=1.20.0-00
+kubeadm upgrade node
+kubectl drain node01 --ignore-daemonsets ---run this command on contraolplane or master node , not on the node u want to draiin 
+apt-get install -y kubelet=1.20.0-00 kubectl=1.20.0-00
+systemctl daemon-reload
+systemctl restart kubelet
+kubectl uncordon node01 ---run this command on contraolplane or master node , not on the node u want to uncordon
+
+
+reference link - https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+BACKUP AND RESTORE - 
+
+to take a backup of etcd use command -
+export ETCDCTL_API=3
+etcdctl snapshot save snapshot.db --cacert=<cert> --cert=<cert> --endpoints=[127.0.0.1:2379] --key=<server key> 
+command to check the status of snapshot - etcdctl snapshot status snapshot.db
+etcd data is present in dir - /var/lib/etcd
+to take a backup of all resources in cluster use command - kubectl get all --all-namespaces -o yaml
+
+restore for etcd - 
+service kube-apiserver stop
+export ETCDCTL_API=3
+etcdctl snapshot restore snapshot.db --data-dir /var/lib/etcd-from-backup
+update the data path in /etc/systemcd/etcd.service with the path mentioned in the above and run - systemctl daemon-reload
+systemctl etcd restart
+systemctl kube-apiserver start
+
+reerences - 
+https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster
+
+https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/recovery.md
+
+https://www.youtube.com/watch?v=qRPNuT080Hk
