@@ -1,0 +1,9 @@
+--------------------------------------------------------------------------
+ROLLING UPDATES AND ROLLBACKS
+
+to check the rollout status of a deployment use command - kubectl rollout status <deployment name>
+to check the history of a rollout of a deployment use command - kubectl rollout history <deployment name>
+command to update the image of a deployment - kubectl set image <deployment name> nginx=nginx:1.9.1
+command to rollback to older version of deployment - kubectl rollout undo <deployment name>
+
+--------------------------------------------------------------------------
