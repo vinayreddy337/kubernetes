@@ -48,4 +48,8 @@ kubectl apply -f nginx.yaml - this will creat the object from yml file if the ob
 command to get a yaml from running pod - kubectl -n <namespace> get <resource type> <resource Name> -o yaml
 command to run a shell command on a pod use command  - kubectl exec --namespace=kube-public curl -- sh -c ' <cmmand>'
 
+command to generate a public key and private key for a website (TLS) - 
+openssl genrsa -out my-bank.key 1024 - this is privatekey
+openssl rsa -in my-bank.key -pubout > my-bank.pem - this is publick key
+
 --------------------------------------------------------------------------
