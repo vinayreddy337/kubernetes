@@ -1,0 +1,23 @@
+--------------------------------------------------------------------------
+IMAGE SECURITY
+
+if we want use a image thats present in local repository
+
+create  a secret conatining the credentials of registery
+
+kubectl create secret docker-registry regcred --docker-server=<private registery ip of hostname> --docker-username=<username> --docker-passowrd=<passowrd> --docker-email=<email of user>
+
+then use the following exapmle yamls showing the use of private repo 
+
+apiVesion: V1
+Kind: Pod
+metadata:
+   name: nginx-pod
+spec:
+   conatiners:
+      - name: nginx
+	    image: <private repo ip of hostname>/apps/internal-app
+   imagePullSecrets:
+      - name: regcred
+	  
+--------------------------------------------------------------------------
