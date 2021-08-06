@@ -1,0 +1,13 @@
+--------------------------------------------------------------------------
+API GROUPS -
+command to use api - curl https://<kube api server>:6443/<api>
+command to list all apis - curl http://<kube-api-server>:6443 -k and curl http://<kube-api-server>:6443/apis -k |grep name
+apis in kubernetes -
+/metrics - used to monitor cluster
+/healthz - used to monitor cluster
+/vesion - used to check version of api server
+/api
+/apis
+/logs - used to integrate logs to 3rd party application
+
+--------------------------------------------------------------------------
