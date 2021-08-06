@@ -1,0 +1,21 @@
+to take a backup of etcd use command -
+export ETCDCTL_API=3
+etcdctl snapshot save snapshot.db --cacert=<cert> --cert=<cert> --endpoints=[127.0.0.1:2379] --key=<server key> 
+command to check the status of snapshot - etcdctl snapshot status snapshot.db
+etcd data is present in dir - /var/lib/etcd
+to take a backup of all resources in cluster use command - kubectl get all --all-namespaces -o yaml
+
+restore for etcd - 
+service kube-apiserver stop
+export ETCDCTL_API=3
+etcdctl snapshot restore snapshot.db --data-dir /var/lib/etcd-from-backup
+update the data path in /etc/systemcd/etcd.service with the path mentioned in the above and run - systemctl daemon-reload
+systemctl etcd restart
+systemctl kube-apiserver start
+
+reerences - 
+https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster
+
+https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/recovery.md
+
+https://www.youtube.com/watch?v=qRPNuT080Hk
