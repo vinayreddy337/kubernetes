@@ -33,6 +33,8 @@ Add the above line to pod-definition.yaml (cat > pod-definition.yaml and paste t
 
 and run the command - kubectl create -f pod-definition.yaml - this creates a pod
 to see the pods - kubectl get pods
+command to see the pods with labels : kubectl get pods -l name=payroll
+kubectl get pods --show-labels
 to see the status of a pod - kubectl describe pod <pod name>
 to edit a pod- kubectl edit pod redis 
 
