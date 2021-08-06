@@ -1,0 +1,37 @@
+--------------------------------------------------------------------------
+AUTHENTICATION in kubernetes
+
+kubernetes does not manage user accounts natively but it supports service accounts.
+for managing user accounts kubernetes uses external authentication mechanisims like LDAP or file with user details or static token file or certificates
+
+user authentication mechanism - 
+
+see file  - Article on Setting up Basic Authentication for clear instructiond on basic authentication setup (this covers pint 1 and 2)
+
+1 - static password file
+create a list of users and passowrds in csv file
+ex - passowrd,username,userid,group(optional)
+	 password1,user1,u0001,group1
+	 password2,user2,u0002
+	 password3,user3,u0003
+
+add the option --basic-auth-file=user-details.csv to kube-api-server.service file and then restart the kube-api-server
+if the cluster is setup using kubeadm tool then update the command in the /etc/kubernetes/manifests/kube-api-server.yaml
+
+then while accessing cluster using curl command give -u "username:passwd"
+ex - curl -v -k https://mart-ip:6443/api/v1/pods -u "user1:password1"
+
+2 - static token file
+example csv file -
+token,username,userid,group(optional)
+eqybwefnuifnwfwjnjlk,user1,u0001,group1
+vyvwehbujfenwokjfnwe,user2,u0002,group2
+bwefjbuifwnjnwfnfwiu,user3,u0003,group3
+
+add the option --token-auth-file=user-details.csv to kube-api-server.service file and then restart the kube-api-server
+if the cluster is setup using kubeadm tool then update the command in the /etc/kubernetes/manifests/kube-api-server.yaml
+
+then while accessing cluster using curl command give --header "Authorization Bearer <token>"
+ex - curl -v -k https://mart-ip:6443/api/v1/pods "Authorization Bearer eqybwefnuifnwfwjnjlk"
+
+--------------------------------------------------------------------------
