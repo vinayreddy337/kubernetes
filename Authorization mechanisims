@@ -1,0 +1,116 @@
+--------------------------------------------------------------------------
+Authorization mechanisims
+Node
+ABAC(attribute based) - it is used to give a user or a group to view , cretae or delete pods permissions
+						this is done by using a policy file
+						example policy file -  {"kind": "Policy", "spec": {"user": "dev-user", "namespace": "*", "resource": "pods", "apiGroup": "*"}}
+RBAC(role based) - create a role with set of permissions and assosciate users to that role
+web-hook
+AlwaysAllow - always allows without any security checks
+AlwaysDeny - always denys without any security checks
+
+
+theabove modes are set using changing --autorization-mode=<mode> in kube-api-server systemd service file under ExecStart
+if this option is not set the by default it takes AlwaysAllow
+
+we can also set multiple modes - --autorization-mode=Node,RBAC,Webhook
+
+RBAC - 
+we create a role by creating a role yamlfile -
+
+example yaml file cat > developer-role.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+   Name: developer
+rules:
+   - apiGroups: [""]
+     resources: ["pods"]
+     verbs: ["list", "get", "create", "update", "delete"]
+  
+   - apiGroups: [""]
+     resources: ["configMap"]
+     verbs: ["create"]
+  
+use command - kubectl create -f developer-role.yaml - to create role
+command to edit a role - kubecgtl edit role rolename --namespace=<namespace>
+
+with the help of above role user can - view , create, delete pods and create configMaps
+
+if we want to further ristrice access to a particular resource add resourcesNames: ["blue", "green] below verbs in rules section
+now we need to bind user to role so user can access the abilities the role has to provide
+
+we need to create yaml file to bind user to a role 
+
+example yaml - cat>devuser-developer-bind.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+   name: devuser-developer-bind
+subjects: <this is the place where we specify user details>
+   - kind: User
+     name: dev-user <this is user name>
+     apiGroup: rbac.authorization.k8s.io
+roleRef: <this is the place where we specify role details>
+   kind: Role
+   name: developer <this is role name>
+   apiGroup: rbac.authorization.k8s.io
+
+craete role binding using command - kubectl create -f devuser-developer-bind.yaml
+
+command to view the roles - kubectl get roles
+command to view the role bindings - kubectl get rolebindings
+command to view describe role - kubectl describe role <role name>
+command to view describe rolebindings - kubectl describe rolebinding <rolebinding name>
+command to edit role - kubectl edit role <role name>
+
+command to check if i have access to do something in kubernetes cluster - kubectl auth can-i create deployments or kubectl auth can-i create pods or kubectl auth can-i delete nodes
+
+above command to check acces for different user - kubectl auth can-i create deployments --as dev-user
+
+we can create roles for only the resources on namespaced
+
+command to check the reources in namespaced - kubectl api-resources --namespaced=true
+command to chcek resources not in namespaced - kubectl api-resources --namespaced=false
+
+in order to rovide access to cluster resources we use cluster role and role bindings
+
+example yaml to create cluster role -  cat>cluster-admin- role-def.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+   name: cluster-adminstrator
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]"
+  verbs: ["list", "get", "create", "delete"]
+
+kubectl create -f cluster-admin-role-def.yaml
+
+command to see cluster roles - kubectl get clusterrole
+
+now use the below example yaml file to bind a user to a cluster role -
+
+cat>cluster-bind.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+   name: cluster-role-admin-binding
+subjects: <this is the place where we specify user details>
+   - kind: User
+     name: cluster-admin <this is user name>
+     apiGroup: rbac.authorization.k8s.io
+roleRef: <this is the place where we specify role details>
+   kind: ClusterRole
+   name: cluster-adminstrator <this is role name>
+   apiGroup: rbac.authorization.k8s.io
+   
+kubectl create -f cluster-bind.yaml
+command to view cluste role bindings - kubectl get clusterrolebindings.rbac.authorization.k8s.io
+
+
+--------------------------------------------------------------------------
