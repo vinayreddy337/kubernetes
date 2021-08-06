@@ -1,0 +1,88 @@
+--------------------------------------------------------------------------
+CERTIFICATES in kebernets
+
+crt , pem means public key
+key means private key
+
+there are two types certificates - 
+1 - server certificates for secure communtication to server - example - kube-api-server has its own crt and key files , etcd-server has its own crt and key files, kubelet has its own crt and key files
+2 - client certificates for secure communtication with clients - example - scheduler , admin user , kube-controller-manager , kube-proxy
+
+--------------------------------------------------------------------------
+CERTIFICATE GENERATION in kebernetes
+generate a private key using command - openssl genrsa -out ca.key 2048
+create a certificate signing request to get signed by CA - openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
+create a signed public key - openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt 
+
+these are for server key
+
+command to generate certificate for admin user - openssl genrsa -out admin.key 2048
+create a certificate signing request to get signed by CA - openssl req -new -key admin.key -subj "/CN=kube-admin/O=system:masters" -out admin.csr
+create a signed public key - openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt
+
+we can use this crt and key file as an authentication mechanism to communicate with kubernetes cluster
+
+example - kubeconfig.yaml ,  curl https://kube-api-server:6443/api/v1/pods --key admin.key --cert admin.crt --cacert ca.crt , kubectl get pods --server kube-api-server:6443 --client-key admin.key --client-certificate admin.crt --certificate-authority ca.crt
+
+
+kube-api-server has many dns names so follow thw steps to generate kube-spi-server crt and key file - 
+
+generate a private key using command - openssl genrsa -out apiserver.key 2048
+
+create a config file  - 
+cat > openssl.cnf
+[req]
+req_extensions = v3_req
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation,
+subjectAltName = @alt_names
+[ alt_names ]
+DNS.1 = kuberenetes
+DNS.2 = kuberenetes.default
+DNS.3 = kuberenetes.default.svc
+DNS.4 = kuberenetes.default.svc.cluster.local
+IP.1 = 10.94.0.1
+IP.2 = 172.12.0.8
+
+create a certificate signing request to get signed by CA - openssl -req -new -key apiserver.key -subj "/CN=kube-apiserver" -out apiserver.csr -config openssl.cnf
+create a signed public key - openssl x509 -req -in apiserver.csr -CA ca.crt -CAkey ca.key -out apiserver.crt 
+
+command to decode a certificate - openssl x509 -in apiserver.crt -text -noout
+
+reference  - https://github.com/mmumshad/kubernetes-the-hard-way/tree/master/tools
+
+--------------------------------------------------------------------------
+CERTIFICATE API
+user creates a certificate signing request and sends it to admin - 
+
+generate a private key using command - openssl genrsa -out hari.key 2048
+create a certificate signing request to get signed by CA - openssl req -new -key ca.key -subj "/CN=Hari" -out hari.csr
+
+hari.csr is sent to admin
+
+admin creates a sigining object that needs to be sent to to kube api server 
+
+cat>hari_csr.yaml
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+        name: hari
+spec:
+        groups:
+                - system:authenticated
+        usages:
+                - digital signature
+                - client auth
+        request: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ1ZqQ0NBVDRDQVFBd0VURVBNQTBHQTFVRUF3d0dZV3R6YUdGNU1JSUJJakFOQmdrcWhraUc5dzBCQVFFRgpBQU9DQVE4QU1JSUJDZ0tDQVFFQTZUeFB1c3l5L20zSUdMUjdNZklmMTE1dy9OTkR2YXJrY3pwM2xYK3AxOEtTCkN1WXJ3Uk16cW80Y3RoNm5WdTZLWlZCUlVtanhXdmhuekRRa3lwa0VEeXh2QU5kZGJXcVZjZkhyMlFBdG9LR3MKU3ZMUlczdkxYRUt1TnRLb2pHdURzNmNycUF5L0hJb1BKSlErOENUNWFHcFZYandlNndkQ3VhTDJTbGdLZFhDNgo2VHlEaDNGemY5eGlJR1dCanVlY0c1eVd0Tm9sV0U1dlVJQ1JmcHBJbThOU3NqVFAxS0RwdHhqQTNmNTNoRFJxCjMxK2JUd0V2SkRkaGIyeFZ6eVpNMXRLTUJaWVF1KzdkMWZ1N1JWbU1GNEplSGFTWnJuZklsZ1NTWWFqYVNtOUoKeit1OHBYVFhraGV0aTRrYTViV0E4SUJiNHIxdHAvUXg0N1AyUUhyL3JRSURBUUFCb0FBd0RRWUpLb1pJaHZjTgpBUUVMQlFBRGdnRUJBT2I1ZSt1dmp5WjdqWWxvODhmOG9aNGZxQUZ1SVZMbGVnVzUyOXg2RWQ2cnVDeG9FRDJwCnJUZ3I0UjNxLzdXbUVOVzhQKzBoWnlONUJVdlFBWTBpNXBkV2F1RUNCSVJxQkxmRGVDcEh5b21HV3JZQ2YxdysKRm1VSXN1ZnUxZ2hHMUEvbnhCa3hzeVBJRWNOU2VETyt4RGt0aUx3MlA4b25mNXp0ZEg5MWoxWWNGSzcxYVdndQo2MXhURXJoVGRVQXBKZW8wcGtMUVVzZ0plZlV3bHhTeGpodXFwOFV3eVBOUU5WTDFmaDkxamNNdTR3eUlLR2tCCnpSM1U4RGF3RDFwT3Q4VzVoOWlNVjRCUjl0bHlXSjRjVHFsWG1NTms1TTQ4SGVURHU1R2wvd1ZPcFh0V2ZrQ2QKL0VmTTdxQnJRWWRmbDJRdkdaZ3E3RDV4akhIVG1WZkJiTXM9Ci0tLS0tRU5EIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLQo=
+        signerName: kubernetes.io/kube-apiserver-client
+
+to encode hari.csr use command - cat hari.csr |  base64 | tr -d \\n 
+
+command to see the certificate sigining requests - kubectl get csr
+command to approve certificate sigining request - kubectl certificate approve hari
+command to get the signed certificate - kubectl get csr hari -o yaml - we will see the cetificate under status [certificate] , but the certificate in base64 
+encoaded, to decode use command echo "Lso...ao="|base64 --decode
+command to delete csr object - kubectl delete csr agent-smith
+
+--------------------------------------------------------------------------
